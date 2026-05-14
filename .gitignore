@@ -1,0 +1,43 @@
+# Binaries for programs and plugins
+bin/
+
+# Test binary, coverage and profiling outputs
+*.test
+coverage.out
+coverage.html
+*.coverprofile
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# Module cache
+Godeps/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Database files
+*.db
+*.sqlite
+
+# Logs
+*.log
+
+# Build output
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
