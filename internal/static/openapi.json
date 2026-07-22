@@ -1,6 +1,96 @@
 {
 	"openapi": "3.0.2",
 	"paths": {
+		"/auth/signup": {
+			"post": {
+				"description": "Create a user account.",
+				"summary": "Sign up",
+				"tags": ["Authentication"],
+				"operationId": "signup",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignupRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "User created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request or email already registered",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"description": "Authenticate a user with an email address and password.",
+				"summary": "Log in",
+				"tags": ["Authentication"],
+				"operationId": "login",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Authentication successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid email or password",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/status": {
 			"get": {
 				"description": "Get health status",
@@ -85,6 +175,106 @@
 		}
 	],
 	"components": {
+		"schemas": {
+			"SignupRequest": {
+				"type": "object",
+				"required": ["first_name", "email", "password"],
+				"properties": {
+					"first_name": {
+						"type": "string",
+						"example": "Rahul"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Razj"
+					},
+					"email": {
+						"type": "string",
+						"format": "email",
+						"example": "rahul@example.com"
+					},
+					"password": {
+						"type": "string",
+						"format": "password",
+						"minLength": 8,
+						"example": "correct-horse-battery"
+					}
+				}
+			},
+			"LoginRequest": {
+				"type": "object",
+				"required": ["email", "password"],
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"example": "rahul@example.com"
+					},
+					"password": {
+						"type": "string",
+						"format": "password",
+						"example": "correct-horse-battery"
+					}
+				}
+			},
+			"AuthResponse": {
+				"type": "object",
+				"required": ["user"],
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/User"
+					}
+				}
+			},
+			"User": {
+				"type": "object",
+				"required": ["id", "first_name", "email", "created_at", "updated_at"],
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"format": "email"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				}
+			},
+			"HTTPError": {
+				"type": "object",
+				"properties": {
+					"code": { "type": "string" },
+					"message": { "type": "string" },
+					"status": { "type": "integer" },
+					"override": { "type": "boolean" },
+					"errors": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"field": { "type": "string" },
+								"error": { "type": "string" }
+							}
+						}
+					},
+					"action": { "type": "object" }
+				}
+			}
+		},
 		"securitySchemes": {
 			"bearerAuth": {
 				"type": "http",

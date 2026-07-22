@@ -32,6 +32,8 @@ func Migrate(ctx context.Context, logger *logger.LoggerService, cfg *config.Conf
 		cfg.Database.SSLMode,
 	)
 
+	fmt.Println("Running database migrations...: " + dsn)
+
 	conn, err := pgx.Connect(ctx, dsn)
 
 	if err != nil {

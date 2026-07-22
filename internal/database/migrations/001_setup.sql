@@ -1,6 +1,15 @@
--- Write your migrate up statements here
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE users (
+	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    first_name TEXT NOT NULL,
+    last_name TEXT NULL,
+	email TEXT NOT NULL UNIQUE,
+	password_hash TEXT NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
 ---- create above / drop below ----
 
--- Write your migrate down statements here. If this migration is irreversible
--- Then delete the separator line above.
+DROP TABLE users;

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/RahulRazj/go-crud-auth/internal/repository"
 	"github.com/RahulRazj/go-crud-auth/internal/server"
 )
 
@@ -17,11 +18,13 @@ func NewHandler(s *server.Server) Handler {
 type Handlers struct {
 	Health  *HealthHandler
 	OpenAPI *OpenAPIHandler
+	Auth    *AuthHandler
 }
 
-func NewHandlers(s *server.Server) *Handlers {
+func NewHandlers(s *server.Server, users *repository.UserRepository) *Handlers {
 	return &Handlers{
 		Health:  NewHealthHandler(s),
 		OpenAPI: NewOpenAPIHandler(s),
+		Auth:    NewAuthHandler(s, users),
 	}
 }

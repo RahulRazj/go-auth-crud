@@ -23,5 +23,6 @@ func NewRouter(s *server.Server, h *handler.Handlers) *echo.Echo {
 	)
 
 	registerSystemRoutes(router, h)
+	registerAuthRoutes(router, h)
 	return router
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/RahulRazj/go-crud-auth/internal/database"
 	"github.com/RahulRazj/go-crud-auth/internal/handler"
 	"github.com/RahulRazj/go-crud-auth/internal/logger"
+	"github.com/RahulRazj/go-crud-auth/internal/repository"
 	"github.com/RahulRazj/go-crud-auth/internal/router"
 	"github.com/RahulRazj/go-crud-auth/internal/server"
 )
@@ -42,9 +43,9 @@ func main() {
 		logger.Fatal("failed to initialize server: %w", err)
 	}
 
-	// TODO: Initialize repositories, services and handlers
-
-	handlers := handler.NewHandlers(srv)
+	baseRepository := repository.NewBaseRepository(srv.DB)
+	userRepository := repository.NewUserRepository(baseRepository)
+	handlers := handler.NewHandlers(srv, userRepository)
 
 	// Initialize router
 	r := router.NewRouter(srv, handlers)
