@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/RahulRazj/go-crud-auth/internal/repository"
 	"github.com/RahulRazj/go-crud-auth/internal/server"
+	"github.com/RahulRazj/go-crud-auth/internal/service"
 )
 
 type Handler struct {
@@ -21,10 +22,11 @@ type Handlers struct {
 	Auth    *AuthHandler
 }
 
-func NewHandlers(s *server.Server, users *repository.UserRepository) *Handlers {
+func NewHandlers(s *server.Server, users *repository.UserRepository, jwt *service.JWTService) *Handlers {
 	return &Handlers{
 		Health:  NewHealthHandler(s),
 		OpenAPI: NewOpenAPIHandler(s),
-		Auth:    NewAuthHandler(s, users),
+		Auth:    NewAuthHandler(s, users, jwt),
 	}
 }
+

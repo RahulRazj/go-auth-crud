@@ -4,10 +4,11 @@ import (
 	"github.com/RahulRazj/go-crud-auth/internal/handler"
 	"github.com/RahulRazj/go-crud-auth/internal/middleware"
 	"github.com/RahulRazj/go-crud-auth/internal/server"
+	"github.com/RahulRazj/go-crud-auth/internal/service"
 	"github.com/labstack/echo/v4"
 )
 
-func NewRouter(s *server.Server, h *handler.Handlers) *echo.Echo {
+func NewRouter(s *server.Server, h *handler.Handlers, jwt *service.JWTService) *echo.Echo {
 	middlewares := middleware.NewMiddlewares(s)
 	router := echo.New()
 
@@ -23,6 +24,7 @@ func NewRouter(s *server.Server, h *handler.Handlers) *echo.Echo {
 	)
 
 	registerSystemRoutes(router, h)
-	registerAuthRoutes(router, h)
+	registerAuthRoutes(router, h, jwt)
 	return router
 }
+

@@ -91,6 +91,91 @@
 				}
 			}
 		},
+		"/auth/refresh": {
+			"post": {
+				"description": "Generate a new access token and refresh token pair using a valid refresh token.",
+				"summary": "Refresh Access Token",
+				"tags": ["Authentication"],
+				"operationId": "refreshToken",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RefreshTokenRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Tokens successfully refreshed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request body or missing refresh token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid or expired refresh token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/me": {
+			"get": {
+				"description": "Get current logged-in user profile.",
+				"summary": "Get Current User Profile",
+				"tags": ["Authentication"],
+				"operationId": "getMe",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Authenticated user details",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized or invalid access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/status": {
 			"get": {
 				"description": "Get health status",
@@ -223,6 +308,29 @@
 				"properties": {
 					"user": {
 						"$ref": "#/components/schemas/User"
+					},
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					},
+					"accessTokenExpiresAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"refreshTokenExpiresAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				}
+			},
+			"RefreshTokenRequest": {
+				"type": "object",
+				"required": ["refreshToken"],
+				"properties": {
+					"refreshToken": {
+						"type": "string"
 					}
 				}
 			},

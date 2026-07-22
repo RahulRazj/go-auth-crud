@@ -15,6 +15,7 @@ import (
 	"github.com/RahulRazj/go-crud-auth/internal/repository"
 	"github.com/RahulRazj/go-crud-auth/internal/router"
 	"github.com/RahulRazj/go-crud-auth/internal/server"
+	"github.com/RahulRazj/go-crud-auth/internal/service"
 )
 
 const DefaultContextTimeout = 30
@@ -45,10 +46,12 @@ func main() {
 
 	baseRepository := repository.NewBaseRepository(srv.DB)
 	userRepository := repository.NewUserRepository(baseRepository)
-	handlers := handler.NewHandlers(srv, userRepository)
+	jwtService := service.NewJWTService(cfg.JWT)
+	handlers := handler.NewHandlers(srv, userRepository, jwtService)
 
 	// Initialize router
-	r := router.NewRouter(srv, handlers)
+	r := router.NewRouter(srv, handlers, jwtService)
+
 
 	// Setup HTTP server
 	srv.SetupHTTPServer(r)

@@ -13,6 +13,7 @@ type Config struct {
 	Server   ServerConfig   `koanf:"server" validate:"required"`
 	Database DatabaseConfig `koanf:"database" validate:"required"`
 	Logging  LoggingConfig  `koanf:"logging" validate:"required"`
+	JWT      JWTConfig      `koanf:"jwt" validate:"required"`
 }
 
 type Primary struct {
@@ -22,6 +23,12 @@ type Primary struct {
 type LoggingConfig struct {
 	Level string `koanf:"level" validate:"required"`
 	File  string `koanf:"file"`
+}
+
+type JWTConfig struct {
+	Secret               string `koanf:"secret" validate:"required"`
+	AccessTokenTTLMin    int    `koanf:"access_token_ttl_min" validate:"required"`
+	RefreshTokenTTLHours int    `koanf:"refresh_token_ttl_hours" validate:"required"`
 }
 
 type ServerConfig struct {
