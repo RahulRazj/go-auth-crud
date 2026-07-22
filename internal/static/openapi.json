@@ -1,0 +1,399 @@
+{
+	"openapi": "3.0.2",
+	"paths": {
+		"/auth/signup": {
+			"post": {
+				"description": "Create a user account.",
+				"summary": "Sign up",
+				"tags": ["Authentication"],
+				"operationId": "signup",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignupRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "User created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request or email already registered",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"description": "Authenticate a user with an email address and password.",
+				"summary": "Log in",
+				"tags": ["Authentication"],
+				"operationId": "login",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Authentication successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid email or password",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/refresh": {
+			"post": {
+				"description": "Generate a new access token and refresh token pair using a valid refresh token.",
+				"summary": "Refresh Access Token",
+				"tags": ["Authentication"],
+				"operationId": "refreshToken",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RefreshTokenRequest"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Tokens successfully refreshed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request body or missing refresh token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid or expired refresh token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/me": {
+			"get": {
+				"description": "Get current logged-in user profile.",
+				"summary": "Get Current User Profile",
+				"tags": ["Authentication"],
+				"operationId": "getMe",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Authenticated user details",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Unauthorized or invalid access token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/HTTPError"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/status": {
+			"get": {
+				"description": "Get health status",
+				"summary": "Get health",
+				"tags": ["Health"],
+				"parameters": [],
+				"operationId": "getHealth",
+				"responses": {
+					"200": {
+						"description": "200",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"enum": ["healthy", "unhealthy"]
+										},
+										"timestamp": {
+											"type": "string",
+											"format": "date-time"
+										},
+										"environment": {
+											"type": "string"
+										},
+										"checks": {
+											"type": "object",
+											"properties": {
+												"database": {
+													"type": "object",
+													"properties": {
+														"status": {
+															"type": "string"
+														},
+														"response_time": {
+															"type": "string"
+														},
+														"error": {
+															"type": "string"
+														}
+													},
+													"required": ["status", "response_time"]
+												},
+												"redis": {
+													"type": "object",
+													"properties": {
+														"status": {
+															"type": "string"
+														},
+														"response_time": {
+															"type": "string"
+														},
+														"error": {
+															"type": "string"
+														}
+													},
+													"required": ["status", "response_time"]
+												}
+											},
+											"required": ["database"]
+										}
+									},
+									"required": ["status", "timestamp", "environment", "checks"]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"info": {
+		"version": "1.0.0",
+		"title": "GO_AUTH_CRUD REST API - Documentation",
+		"description": "GO_AUTH_CRUD REST API - Documentation"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:8080",
+			"description": "Local Server"
+		}
+	],
+	"components": {
+		"schemas": {
+			"SignupRequest": {
+				"type": "object",
+				"required": ["first_name", "email", "password"],
+				"properties": {
+					"first_name": {
+						"type": "string",
+						"example": "Rahul"
+					},
+					"last_name": {
+						"type": "string",
+						"example": "Razj"
+					},
+					"email": {
+						"type": "string",
+						"format": "email",
+						"example": "rahul@example.com"
+					},
+					"password": {
+						"type": "string",
+						"format": "password",
+						"minLength": 8,
+						"example": "correct-horse-battery"
+					}
+				}
+			},
+			"LoginRequest": {
+				"type": "object",
+				"required": ["email", "password"],
+				"properties": {
+					"email": {
+						"type": "string",
+						"format": "email",
+						"example": "rahul@example.com"
+					},
+					"password": {
+						"type": "string",
+						"format": "password",
+						"example": "correct-horse-battery"
+					}
+				}
+			},
+			"AuthResponse": {
+				"type": "object",
+				"required": ["user"],
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"accessToken": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					},
+					"accessTokenExpiresAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"refreshTokenExpiresAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				}
+			},
+			"RefreshTokenRequest": {
+				"type": "object",
+				"required": ["refreshToken"],
+				"properties": {
+					"refreshToken": {
+						"type": "string"
+					}
+				}
+			},
+			"User": {
+				"type": "object",
+				"required": ["id", "first_name", "email", "created_at", "updated_at"],
+				"properties": {
+					"id": {
+						"type": "string",
+						"format": "uuid"
+					},
+					"first_name": {
+						"type": "string"
+					},
+					"last_name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"format": "email"
+					},
+					"created_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"updated_at": {
+						"type": "string",
+						"format": "date-time"
+					}
+				}
+			},
+			"HTTPError": {
+				"type": "object",
+				"properties": {
+					"code": { "type": "string" },
+					"message": { "type": "string" },
+					"status": { "type": "integer" },
+					"override": { "type": "boolean" },
+					"errors": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"field": { "type": "string" },
+								"error": { "type": "string" }
+							}
+						}
+					},
+					"action": { "type": "object" }
+				}
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			},
+			"x-service-token": {
+				"type": "apiKey",
+				"name": "x-service-token",
+				"in": "header"
+			}
+		}
+	}
+}

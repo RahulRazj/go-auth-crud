@@ -10,18 +10,15 @@ tasks:
             - task --list-all
         silent: true
 
-    confirm:
-        desc: confirmation prompt
+    build:
+        desc: Build the API binary
         cmds:
-            - |
-                echo -n 'Are you sure? [y/N] ' && read ans && [ ${ans:-N} = y ]
-        silent: true
-        internal: true
+            - go build -o ./tmp/main.exe ./cmd/api
 
     run:
-        desc: run the cmd/api application
+        desc: run the cmd/api application with hot-reloading
         cmds:
-            - go run ./cmd/api
+            - air
 
     migrations:new:
         desc: create a new database migration
@@ -39,10 +36,9 @@ tasks:
 
     migrations:up:
         desc: apply all up database migrations
-        deps: [confirm]
+        silent: true
         cmds:
-            - echo 'Running up migrations...'
-            - tern migrate -m ./internal/database/migrations --conn-string {{.BOILERPLATE_DB_DSN}}
+            - 'tern migrate -m ./internal/database/migrations --host "{{index . "GO_AUTH_CRUD_DATABASE.HOST"}}" --port "{{index . "GO_AUTH_CRUD_DATABASE.PORT"}}" --user "{{index . "GO_AUTH_CRUD_DATABASE.USER"}}" --password "{{index . "GO_AUTH_CRUD_DATABASE.PASSWORD"}}" --database "{{index . "GO_AUTH_CRUD_DATABASE.NAME"}}" --sslmode "{{index . "GO_AUTH_CRUD_DATABASE.SSL_MODE"}}"'
 
     tidy:
         desc: format all .go files, and tidy and vendor module dependencies
